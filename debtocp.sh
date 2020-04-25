@@ -1,7 +1,41 @@
 #!/bin/bash
 
+OPTIND=1
+
+usage() { 
+	echo "Usage: $0 [OPTIONS] Package.deb"
+	echo "OPTIONS include:"
+	echo "-i file       :Script file to be added and called by default CP init"
+	echo "-d directory  :Directory of files to be added to CP"
+	exit 0
+}
+
+EXTRA_INIT=''
+EXTRA_DIR=''
+
+while getopts "i:d:" o; do
+    case "${o}" in
+        i)
+            EXTRA_INIT=${OPTARG}
+            ;;
+        d)
+            EXTRA_DIR=${OPTARG}
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+[ $# -lt 1 ] && usage
+
 DEB_FILE=$1
-EXTRA_INIT=$2
+
+[ -f $DEB_FILE ] || usage
+[ ! -z $EXTRA_INIT ] && [ ! -f $EXTRA_INIT ] && usage
+[ ! -z $EXTRA_DIR ] && [ ! -d $EXTRA_DIR ] && usage
+
 VERSION=$(dpkg -I $DEB_FILE | grep Version | sed -e "s/^.*Version: //")
 PACKAGE=$(dpkg -I $DEB_FILE | grep Package | sed -e "s/^.*Package: //")
 SIZE=$(dpkg -I $DEB_FILE | grep Installed-Size | sed -e "s/^.*Installed-Size: //")
@@ -68,6 +102,8 @@ mkdir results-$PACKAGE
 
 dpkg -x $DEB_FILE $PACKAGE
 cp -f $EXTRA_INIT ./$PACKAGE
+cp -a $EXTRA_DIR/* ./$PACKAGE
+
 chmod 755 ./${PACKAGE}/${EXTRA_INIT}
 tar cjvf results-$PACKAGE/$PACKAGE.tar.bz2 $PACKAGE ${PACKAGE}_init_script
 
@@ -81,6 +117,5 @@ name="$PACKAGE"
 minfw="10.05.100".
 EOF
 
-#python3 fill_in_profile.py $VERSION > results-$VERSION/profile.xml
-
+exit 0
 
