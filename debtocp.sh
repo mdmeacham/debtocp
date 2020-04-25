@@ -6,7 +6,7 @@ usage() {
 	echo "Usage: $0 [OPTIONS] Package.deb"
 	echo "OPTIONS include:"
 	echo "-i file       :Script file to be added and called by default CP init"
-	echo "-d directory  :Directory of files to be added to CP"
+	echo "-d directory  :Directory of extra (in addition to files in deb package) files to be added to CP"
 	exit 0
 }
 
