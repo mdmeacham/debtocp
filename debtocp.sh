@@ -101,8 +101,10 @@ rm -fr results-$PACKAGE
 mkdir results-$PACKAGE
 
 dpkg -x $DEB_FILE $PACKAGE
-cp -f $EXTRA_INIT ./$PACKAGE
-cp -a $EXTRA_DIR/* ./$PACKAGE
+
+[ -z $EXTRA_INIT ] || cp -f $EXTRA_INIT ./$PACKAGE
+
+[ -z $EXTRA_DIR ] || cp -a $EXTRA_DIR/* ./$PACKAGE
 
 chmod 755 ./${PACKAGE}/${EXTRA_INIT}
 tar cjvf results-$PACKAGE/$PACKAGE.tar.bz2 $PACKAGE ${PACKAGE}_init_script
