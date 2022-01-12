@@ -106,8 +106,10 @@ dpkg -x $DEB_FILE $PACKAGE
 
 [ -z $EXTRA_DIR ] || cp -a $EXTRA_DIR/* ./$PACKAGE
 
+
 chmod 755 ./${PACKAGE}/${EXTRA_INIT}
-tar cjvf results-$PACKAGE/$PACKAGE.tar.bz2 $PACKAGE ${PACKAGE}_init_script
+cp ${PACKAGE}_init_script ./$PACKAGE
+tar cjvf results-$PACKAGE/$PACKAGE.tar.bz2 $PACKAGE
 
 cat << EOF > results-$PACKAGE/$PACKAGE.inf
 [INFO]
